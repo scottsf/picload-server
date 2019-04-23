@@ -5,10 +5,11 @@ const typeDefs = `
   type Query {
     users(query: String!): [User!]!
     posts(query:String!): [Post!]!
+    comments(query:String!): [Comment!]!
   }
 
   type User {
-    id: String!,
+    id: ID!,
     name: String!,
     email: String!,
     password: String!
@@ -16,11 +17,20 @@ const typeDefs = `
   }
 
   type Post {
-    id: String!
+    id: ID!
     title: String!
     body: String!
     published: Boolean!
     author: User!
+  }
+
+  type Comment {
+    id: ID!
+    text: String!
+    author: User!
+    post: Post!
+    updatedAt: String!
+    createdAt: String!
   }
 `
 
@@ -36,7 +46,13 @@ const resolvers = {
       if (!args.query) {
         return db.posts
       }
+    },
+    comments(parent, args, ctx, info) {
+      if (!args.query) {
+        return db.comments
+      }
     }
+
   },
 
   Post: {
@@ -54,8 +70,18 @@ const resolvers = {
       return db.posts.filter(post => { 
         return post.author_id === parent.id
       })
+    }
+  },
+  Comment: {
+    author(parent, args, ctx, info) {
+      return db.users.find(user => user.id === parent.author_id)
+    },
+
+    post(parent, args, ctx, info) {
+      return db.posts.find(post => post.id === parent.post_id)
 
     }
+
   }
 }
 
