@@ -1,4 +1,3 @@
-// setting up some dummy data for users and posts
 //
 const users = [
     {

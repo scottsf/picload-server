@@ -1,4 +1,5 @@
-const { GraphQLServer } = require('graphql-yoga')
+import { GraphQLServer } from 'graphql-yoga'
+import db from './db'
 
 const typeDefs = `
   type Query {
@@ -6,7 +7,15 @@ const typeDefs = `
   }
 
   type Mutation {
-    createComment(comment: String!): String!
+    createComment(comment: String): [User]!
+  }
+
+  type User {
+    id: String,
+    text: String,
+    author_id: String,
+    post_id: String
+
   }
 `
 
@@ -17,7 +26,7 @@ const resolvers = {
 
   Mutation: {
     createComment: (parent, args, ctx, info) => {
-      console.log('test')
+      return db.map(user => user.id)
     }
   }
 }
