@@ -3,30 +3,58 @@ import db from './db'
 
 const typeDefs = `
   type Query {
-    hello(name: String): String!
-  }
-
-  type Mutation {
-    createComment(comment: String): [User]!
+    users(query: String!): [User!]!
+    posts(query:String!): [Post!]!
   }
 
   type User {
-    id: String,
-    text: String,
-    author_id: String,
-    post_id: String
+    id: String!,
+    name: String!,
+    email: String!,
+    password: String!
+    posts: [Post!]!
+  }
 
+  type Post {
+    id: String!
+    title: String!
+    body: String!
+    published: Boolean!
+    author: User!
   }
 `
 
 const resolvers = {
   Query: {
-    hello: (_, { name }) => `Hello ${name || 'World'}`,
+    users(parent, args, ctx, info) { // not method
+      return db.users.map(user => {
+        return user
+      })
+    },
+
+    posts(parent, args, ctx, info) {
+      if (!args.query) {
+        return db.posts
+      }
+    }
   },
 
-  Mutation: {
-    createComment: (parent, args, ctx, info) => {
-      return db.map(user => user.id)
+  Post: {
+    author: (parent, args, ctx, info) => {
+      return db.users.find(user => {  
+        if (user.id === parent.author_id) {
+          return user
+        }
+      })
+    }
+  },
+
+  User: {
+    posts(parent, args, ctx, info) {
+      return db.posts.filter(post => { 
+        return post.author_id === parent.id
+      })
+
     }
   }
 }
