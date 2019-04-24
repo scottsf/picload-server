@@ -14,6 +14,7 @@ const typeDefs = `
     email: String!,
     password: String!
     posts: [Post!]!
+    comments: [Comment!]!
   }
 
   type Post {
@@ -22,6 +23,7 @@ const typeDefs = `
     body: String!
     published: Boolean!
     author: User!
+    comments: [Comment!]!
   }
 
   type Comment {
@@ -32,6 +34,20 @@ const typeDefs = `
     updatedAt: String!
     createdAt: String!
   }
+
+  ############ MUTATIONS ############
+
+  type Mutation {
+    updateUser(data: updateUserInput!): User!
+  }
+
+  input updateUserInput {
+    id: String! 
+    name: String
+    email: String
+    password: String
+  }
+  
 `
 
 const resolvers = {
@@ -62,6 +78,14 @@ const resolvers = {
           return user
         }
       })
+    },
+
+    comments: (parent, args, ctx, info) => {
+      return db.comments.filter(comment => {
+        if (comment.post_id === parent.id) {
+          return comment
+        }
+      })
     }
   },
 
@@ -70,8 +94,17 @@ const resolvers = {
       return db.posts.filter(post => { 
         return post.author_id === parent.id
       })
+    },
+
+    comments(parent, args, ctx, info) {
+      return db.comments.filter(comment => {
+        if (comment.author_id === parent.id) {
+          return comment
+        }
+      })
     }
   },
+
   Comment: {
     author(parent, args, ctx, info) {
       return db.users.find(user => user.id === parent.author_id)
@@ -81,7 +114,13 @@ const resolvers = {
       return db.posts.find(post => post.id === parent.post_id)
 
     }
+  },
 
+  Mutation: {
+    updateUser(parent, args, ctx, info) {
+      const user = db.users.find(user => user.id === args.data.id)
+      return {...user, ...args.data}
+    }
   }
 }
 
