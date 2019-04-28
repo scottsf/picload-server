@@ -1,0 +1,99 @@
+type Query {
+  users(query: String!): [User!]!
+  posts(query: String!): [Post!]!
+  comments(query: String!): [Comment!]!
+}
+
+type User {
+  id: ID!
+  name: String!
+  email: String!
+  password: String!
+  posts: [Post]!
+  comments: [Comment]!
+}
+
+type Post {
+  id: ID!
+  title: String!
+  body: String!
+  published: Boolean!
+  author: User!
+  comments: [Comment]!
+}
+
+type Comment {
+  id: ID!
+  text: String!
+  author_id: User!
+  post_id: Post!
+  updatedAt: String!
+  createdAt: String!
+}
+
+############ MUTATIONS ############
+
+type Mutation {
+  createUser(data: createUserInput!): User!
+  createPost(data: createPostInput!): Post!
+  createComment(data: createCommentInput!): Comment!
+
+  deleteUser(id: String!): User!
+  deleteComment(id: String!): Comment!
+  deletePost(id: String!): Post!
+
+  updateUser(data: updateUserInput!): User!
+  updatePost(data: updatePostInput!): Post!
+  updateComment(data: updateCommentInput!): Comment!
+}
+
+input createUserInput {
+  id: String!
+  name: String!
+  email: String!
+  password: String!
+}
+
+input createPostInput {
+  title: String!
+  body: String!
+  published: Boolean!
+  author_id: String!
+}
+
+input createCommentInput {
+  text: String!
+  author_id: ID!
+  post_id: ID!
+}
+
+input updateUserInput {
+  id: ID!
+  name: String
+  email: String
+  password: String
+}
+
+input updatePostInput {
+  id: ID!
+  title: String
+  body: String
+  published: Boolean
+}
+
+input updateCommentInput {
+  id: ID!
+  text: String
+}
+
+############ Subscriptions ############
+
+type Subscription {
+  somethingChanged: Result
+  createNewComment(post_id: ID!): Comment!
+  createNewPost(user_id: ID!): Post!
+}
+
+type Result {
+  id: Int
+}

@@ -10,8 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@babel/core": "^7.4.4",
     "babel-cli": "^6.26.0",
     "babel-env": "^2.4.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "graphql-yoga": "^1.17.4",
     "uuid": "^3.3.2"
   },

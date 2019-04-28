@@ -5,6 +5,10 @@ import Query from "./resolvers/Query";
 import Comment from "./resolvers/Comment";
 import Post from "./resolvers/Post";
 import User from "./resolvers/User";
+import Subscription from './resolvers/Subscription'
+import { PubSub } from "graphql-yoga";
+const pubsub = new PubSub();
+
 
 const options = {
   port: 4001,
@@ -20,11 +24,13 @@ const server = new GraphQLServer({
     Query,
     Comment,
     Post,
-    User
+    User,
+    Subscription
   },
 
   context: {
-    db
+    db,
+    pubsub
   }
 });
 
