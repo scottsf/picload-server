@@ -76,13 +76,17 @@ const Mutation = {
     db.posts.push(post);
 
     if (args.data.published === true) {
-        pubsub.publish(`new post ${args.data.author_id}`, {createNewPost: post})
+        pubsub.publish(`post channel`, 
+        {post: {
+          mutation: 'CREATED',
+          data: post
+        }})
     }
-    
+
     return post;
   },
 
-  deletePost(parent, args, { db }, info) {
+  deletePost(parent, args, { db, pubsub }, info) {
     const postIdx = db.posts.findIndex(post => post.id === args.id);
 
     if (postIdx === -1) {
@@ -91,11 +95,20 @@ const Mutation = {
 
     const deletedPost = db.posts.splice(postIdx, 1);
     db.comments = db.comments.filter(comment => comment.post_id !== args.id);
+
+    pubsub.publish(`post channel`, 
+      {post: {
+        mutation: 'DELETED',
+        data: deletedPost[0]
+      }
+    })
+
     return deletedPost[0];
   },
 
-  updatePost(parent, args, { db }, info) {
+  updatePost(parent, args, { db, pubsub }, info) {
     const post = db.posts.find(post => post.id === args.data.id);
+    const originalPost = {...post}
 
     if (!post) {
       throw new Error("Post does not exist");
@@ -109,9 +122,48 @@ const Mutation = {
       post.body = args.data.body;
     }
 
-    if (typeof args.data.published) {
+    if (typeof args.data.published === "boolean") {
       post.published = args.data.published;
     }
+
+    if (originalPost.published && !post.published) {
+      // deleted
+      pubsub.publish(`post channel`, 
+        {post: {
+          mutation: 'DELETED',
+          data: originalPost
+        }})
+    } else if (originalPost.published && post.published) {
+      // updated
+      pubsub.publish(`post channel`, 
+      {post: {
+        mutation: 'UPDATED',
+        data: post
+      }})
+    } else {
+      // created
+      pubsub.publish(`post channel`, 
+      {post: {
+        mutation: 'CREATED',
+        data: post
+      }})
+    }
+    
+    // // publish changes
+    // const wasDeleted = origPost.published && !post.published
+    // const wasCreated = !origPost.published && post.published
+    // if (wasDeleted || wasCreated || post.published) {
+    //   pubsub.publish('post', {
+    //     post: {
+    //       mutation: (
+    //         wasDeleted ? 'DELETED'
+    //         : wasCreated ? 'CREATED'
+    //         : 'UPDATED'
+    //       ),
+    //       data: wasDeleted ? origPost : post,
+    //     }
+    //   })
+    // }
 
     return post;
   },
@@ -127,11 +179,19 @@ const Mutation = {
     const comment = { id: uuidv4(), ...args.data };
     db.comments.push(comment);
 
-    pubsub.publish(`new comment ${args.data.post_id}`, {createNewComment: comment})
+    pubsub.publish(`comment channel ${args.data.post_id}`, 
+      {
+        comment: {
+          mutation: 'CREATED',
+          data: comment
+        }
+        
+      })
+
     return comment;
   },
 
-  deleteComment(parent, args, { db }, info) {
+  deleteComment(parent, args, { db, pubsub }, info) {
     const commentIndex = db.comments.findIndex(
       comment => comment.id === args.id
     );
@@ -141,12 +201,21 @@ const Mutation = {
     }
 
     const deletedComment = db.comments.splice(commentIndex, 1);
+    console.log(deletedComment[0])
+
+    pubsub.publish(`comment channel ${deletedComment[0].post_id}`, 
+      {comment: {
+          mutation: 'DELETED',
+          data: deletedComment[0]
+        }
+      })
+
     return deletedComment[0];
   },
 
-  updateComment(parent, args, { db }, info) {
+  updateComment(parent, args, { db, pubsub }, info) {
     const comment = db.comments.find(comment => comment.id === args.data.id);
-
+    
     if (!comment) {
       throw new Error("Comment does not exist");
     }
@@ -154,6 +223,13 @@ const Mutation = {
     if (typeof args.data.text === "string") {
       comment.text = args.data.text;
     }
+
+    pubsub.publish(`comment channel ${comment.post_id}`, 
+    {comment: {
+        mutation: 'UPDATED',
+        data: comment
+      }
+    })
 
     return comment
   }

@@ -1,5 +1,3 @@
-import { userInfo } from "os";
-
 const SOMETHING_CHANGED_TOPIC = "something_changed";
 
 export const Subscription = {
@@ -18,33 +16,26 @@ export const Subscription = {
     }
   },
 
-  createNewComment: {
-    subscribe(parent, args, { pubsub, db }, info) {
-        const post = db.posts.find(post => {
-           return post.id === args.post_id && post.published 
-        })
+  comment: {
+    subscribe(parent, args, { db, pubsub }, info) {
+      const post = db.posts.find(post => {
+        return post.id === args.post_id && post.published;
+      });
 
-        if (!post) {
-            throw new Error('Post does not exist')
-        }
+      if (!post) {
+        throw new Error("Post does not published");
+      }
 
-        return pubsub.asyncIterator(`new comment ${post.id}`)
+      console.log(post.id)
+
+      return pubsub.asyncIterator(`comment channel ${post.id}`);
     }
   },
 
-  createNewPost: {
-      subscribe(parent, args, {db, pubsub}, info) {
-          const user = db.users.find(user => {
-             return user.id === args.user_id
-          })
-
-          if (!user) {
-              throw new Error('User does not exist')
-          }
-
-          console.log(args.user_id)
-         return pubsub.asyncIterator(`new post ${args.user_id}`)
-      }
+  post: {
+    subscribe(parent, args, { db, pubsub }, info) {
+      return pubsub.asyncIterator(`post channel`);
+    }
   }
 };
 

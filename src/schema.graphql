@@ -90,8 +90,24 @@ input updateCommentInput {
 
 type Subscription {
   somethingChanged: Result
-  createNewComment(post_id: ID!): Comment!
-  createNewPost(user_id: ID!): Post!
+  comment(post_id: ID!): CommentSubscriptionPayload!
+  post: PostSubscriptionPayload! # using proper naming convention like payload
+}
+
+type PostSubscriptionPayload {
+  mutation: String!
+  data: Post!
+}
+
+type CommentSubscriptionPayload {
+  mutation: MutationType!
+  data: Comment!
+}
+
+enum MutationType {
+  CREATED
+  UPDATED
+  DELETED
 }
 
 type Result {
