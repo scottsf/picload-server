@@ -1,11 +1,23 @@
-const Comment = {
-  author_id(parent, args, { db }, info) {
-    return db.users.find(user => user.id === parent.author_id);
-  },
+import { Prisma } from "prisma-binding";
 
-  post_id(parent, args, { db }, info) {
-    return db.posts.find(post => post.id === parent.post_id);
-  }
+const Comment = {
+  // author_id(parent, args, { prisma }, info) {
+
+  //   return prisma.query.users()
+    // const user = {
+    //   where: {
+    //     id: 
+    //   }
+
+    // }
+
+    // // search in users and check there is each parent_id 
+    // return prisma.query.user({where: {id: parent.author_id}})
+  // },
+
+  // post_id(parent, args, { db }, info) {
+  //   return db.posts.find(post => post.id === parent.post_id);
+  // }
 };
 
 export { Comment as default };

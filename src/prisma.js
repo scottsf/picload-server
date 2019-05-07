@@ -5,11 +5,14 @@ const prisma = new Prisma({
     endpoint: "http://localhost:4466"
 })
 
-prisma.query.users(null, '{id name comments {id text}}')
-    .then(res => console.log(JSON.stringify(res, null, 2)))
+export {prisma as default}
 
-const posts = async () => {
-    return await prisma.query.posts(null, '{id title body}')
-}
 
-console.log(posts().then(res => console.log(res)))
+// prisma.query.users(null, '{id name comments {id text}}')
+//     .then(res => console.log(JSON.stringify(res, null, 2)))
+
+// const posts = async () => {
+//     return await prisma.query.posts(null, '{id title body}')
+// }
+
+// console.log(posts().then(res => console.log(res)))
