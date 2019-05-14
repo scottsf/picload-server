@@ -2,12 +2,15 @@ type Query {
   users(query: String): [User]!
   posts(query: String): [Post]!
   comments(query: String): [Comment]!
+  myPosts(query: String!): [Post!]!
+  post(id: ID): Post!
+  me: User!
 }
 
 type User {
   id: ID!
   name: String!
-  email: String!
+  email: String
   password: String!
   posts: [Post!]!
   comments: [Comment!]!
@@ -38,11 +41,11 @@ type Mutation {
   createPost(data: createPostInput!): Post!
   createComment(data: createCommentInput!): Comment!
 
-  deleteUser(id: String!): User!
+  deleteUser: User!
   deleteComment(id: String!): Comment!
   deletePost(id: String!): Post!
 
-  updateUser(id: ID!, data: updateUserInput!): User!
+  updateUser(data: updateUserInput!): User!
   updatePost(id: ID!, data: updatePostInput!): Post!
   updateComment(id: ID!, data: updateCommentInput!): Comment!
 
@@ -63,7 +66,6 @@ input createPostInput {
 
 input createCommentInput {
   text: String!
-  author_id: ID!
   post_id: ID!
 }
 
@@ -94,6 +96,7 @@ type Subscription {
   somethingChanged: Result
   comment(post_id: ID!): CommentSubscriptionPayload!
   post: PostSubscriptionPayload! # using proper naming convention like payload
+  myPost: PostSubscriptionPayload!
 }
 
 type PostSubscriptionPayload {

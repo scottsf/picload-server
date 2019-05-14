@@ -1,4 +1,4 @@
-const SOMETHING_CHANGED_TOPIC = "something_changed";
+import getUserId from '../utils/getUserId'
 
 export const Subscription = {
   comment: {
@@ -23,6 +23,23 @@ export const Subscription = {
             published: true
           }
         }  
+      }, info)
+    }
+  }, 
+
+  myPost: {
+    subscribe(parent, args, { prisma, request }, info) {
+      const userId = getUserId(request)
+
+      return prisma.subscription.post({
+        where: {
+          node: {
+            published: true,
+            author: {
+              id: userId
+            }
+          }
+        }
       }, info)
     }
   }

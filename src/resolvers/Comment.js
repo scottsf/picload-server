@@ -3,6 +3,7 @@ import { Prisma } from "prisma-binding";
 const Comment = {
   // author_id(parent, args, { prisma }, info) {
 
+
   //   return prisma.query.users()
     // const user = {
     //   where: {
