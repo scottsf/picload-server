@@ -15,7 +15,10 @@ const Query = {
     const opArgs = {
       where: {
         name_contains: args.query
-      }
+      },
+      first: args.first,
+      skip: args.skip,
+      orderBy: args.orderBy 
     }
 
     if (!args.query) {
@@ -29,7 +32,10 @@ const Query = {
     const opArgs = {
       where: {
         published: true
-      }
+      },
+      first: args.first,
+      skip: args.skip,
+      orderBy: args.orderBy 
     }
   
     if (args.query) {
@@ -84,8 +90,14 @@ const Query = {
   },
 
   comments(parent, args, { prisma }, info) {
+    const opArgs = {
+      first: args.first,
+      skip: args.skip,
+      orderBy: args.orderBy 
+    }
+    
     if (!args.query) {
-      return prisma.query.comments(null, info);
+      return prisma.query.comments(opArgs, info);
     }
   }
 };

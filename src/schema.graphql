@@ -1,7 +1,19 @@
+# import PostOrderByInput, UserOrderByInput, CommentOrderByInput from "./generated/prisma.graphql"
+
 type Query {
-  users(query: String): [User]!
-  posts(query: String): [Post]!
-  comments(query: String): [Comment]!
+  users(query: String, orderBy: UserOrderByInput): [User]!
+  posts(
+    query: String
+    first: Int
+    skip: Int
+    orderBy: PostOrderByInput
+  ): [Post]!
+  comments(
+    query: String
+    first: Int
+    skip: Int
+    orderBy: CommentOrderByInput
+  ): [Comment]!
   myPosts(query: String!): [Post!]!
   post(id: ID): Post!
   me: User!
@@ -14,6 +26,8 @@ type User {
   password: String!
   posts: [Post!]!
   comments: [Comment!]!
+  updatedAt: String!
+  createdAt: String!
 }
 
 type Post {
@@ -23,6 +37,8 @@ type Post {
   published: Boolean!
   author: User!
   comments: [Comment!]!
+  updatedAt: String!
+  createdAt: String!
 }
 
 type Comment {

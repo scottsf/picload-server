@@ -14,6 +14,10 @@ const User = {
     }
   },
 
+  password(parent, args, ctx, info){
+    return  "Password is protected"
+  },
+
   posts: {
     fragment: 'fragment userId on User { id }',
     resolve(parent, args, { prisma, request }, info) {
