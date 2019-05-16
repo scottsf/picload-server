@@ -71,7 +71,7 @@ type Mutation {
 input createUserInput {
   name: String!
   email: String!
-  password: String
+  password: String!
 }
 
 input createPostInput {

@@ -5,7 +5,8 @@ import hashPassword from "../../utils/hashPassword";
 // JSON Web Token (JWT)
 
 const createUser = async (parent, args, { prisma }, info) => {
-  const password = hashPassword(args.data.password)
+  const password = await hashPassword(args.data.password)
+  console.log(password)
   const user = await prisma.mutation.createUser({
     data: {
       ...args.data,
