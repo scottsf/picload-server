@@ -6,16 +6,14 @@
   "scripts": {
     "start": "node dist/server.js",
     "heroku-postbuild": "babel src --out-dir dist --copy-files",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "get-schema": "graphql get-schema -p prisma",
+    "test": "jest --watch",
+    "get-schema": "graphql get-schema -p prisma --dotenv config/dev.env",
     "dev": "env-cmd -f ./config/dev.env nodemon --exec babel-node --ext js,graphql src/server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@babel/core": "^7.4.4",
     "@babel/polyfill": "^7.4.4",
-    "babel-cli": "^6.26.0",
     "babel-env": "^2.4.1",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "bcryptjs": "^2.4.3",
@@ -26,9 +24,13 @@
     "prisma-binding": "^2.3.10"
   },
   "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.2.0",
     "eslint-plugin-prettier": "^3.0.1",
+    "jest": "^24.8.0",
     "nodemon": "^1.18.11",
     "prettier": "^1.17.0"
   }
