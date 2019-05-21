@@ -1,5 +1,3 @@
-import '@babel/polyfill/noConflict'
-
 import { GraphQLServer, PubSub } from "graphql-yoga";
 import db from "./db";
 import { resolvers, fragmentReplacements } from "./resolvers/index";
@@ -21,13 +19,4 @@ const server = new GraphQLServer({
   fragmentReplacements
 });
 
-const options = {
-  port: process.env.PORT || 4001,
-  endpoint: "/graphql",
-  subscriptions: "/subscriptions",
-  playground: "/playground"
-};
-
-server.start(options, () =>
-  console.log(`Server is running on ${options.port}`)
-);
+export { server as default }
