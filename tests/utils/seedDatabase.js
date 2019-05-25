@@ -12,9 +12,31 @@ const userOne = {
   jwt: undefined
 };
 
+const userTwo = {
+  data: {
+    name: "Batse",
+    email: "batse@gmail.com",
+    password: "batsebatse"
+  }
+}
+
+const postOne = {
+  input: undefined
+}
+
+const postTwo = {
+  input: {
+    title: "Matt title 2",
+    body: "Matt body 2",
+    published: false
+  },
+  post: undefined
+}
+
 const seedDatabase = async () => {
   // delete test data
   jest.setTimeout(10000); // if you are having slow internet issue
+  await prisma.mutation.deleteManyComments();
   await prisma.mutation.deleteManyPosts();
   await prisma.mutation.deleteManyUsers();
 
@@ -25,7 +47,7 @@ const seedDatabase = async () => {
 
   userOne.jwt = jwt.sign({ userId: userOne.user.id }, process.env.JWT_SECRET);
 
-  await prisma.mutation.createPost({
+  postOne.input = await prisma.mutation.createPost({
     data: {
       author: {
         connect: {
@@ -35,21 +57,19 @@ const seedDatabase = async () => {
       title: "Matt title 1",
       body: "Matt body 1",
       published: true
-    }
+    } 
   });
 
-  await prisma.mutation.createPost({
+  postTwo.post = await prisma.mutation.createPost({
     data: {
       author: {
         connect: {
           id: userOne.user.id
         }
       },
-      title: "Matt title 2",
-      body: "Matt body 2",
-      published: false
+    ...postTwo.input
     }
   });
-};
 
-export { seedDatabase as default, userOne };
+}
+export { seedDatabase as default, userOne, postOne, postTwo };
