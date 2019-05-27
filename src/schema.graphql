@@ -58,7 +58,7 @@ type Mutation {
   createComment(data: createCommentInput!): Comment!
 
   deleteUser: User!
-  deleteComment(id: String!): Comment!
+  deleteComment(id: ID!): Comment!
   deletePost(id: String!): Post!
 
   updateUser(data: updateUserInput!): User!

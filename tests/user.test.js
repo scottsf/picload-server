@@ -2,9 +2,9 @@ import "@babel/polyfill";
 import "cross-fetch/polyfill";
 import { gql } from "apollo-boost";
 import prisma from "../src/prisma";
-import seedDatabase, { userOne } from "./utils/seedDatabase";
+import seedDatabase, { userOne, userTwo } from "./utils/seedDatabase";
 import getClient from "./utils/getClient";
-import { createUser, getUsers, getProfile } from './utils/operations'
+import { createUser, getUsers, getProfile } from "./utils/operations";
 
 const client = getClient();
 beforeEach(seedDatabase);
@@ -46,12 +46,12 @@ test("Should create a new user", async () => {
 test("Should expose public author profiles", async () => {
   const response = await client.query({ query: getUsers });
 
-  expect(response.data.users.length).toBe(1);
+  expect(response.data.users.length).toBe(2);
   expect(response.data.users[0].email).toBe(null);
   expect(response.data.users[0].name).toBe("Matt");
 });
 
-test("Should not login with bed credentials", async () => {
+test("Should not login with bad credentials", async () => {
   const login = gql`
     mutation {
       login(email: "matt@gmail.com", password: "wrongpassword") {
@@ -85,3 +85,8 @@ test("Should fetch user profile", async () => {
   expect(data.me.id).toBe(userOne.user.id);
   expect(data.me.name).toBe(userOne.user.name);
 });
+
+test("Should check a second user", async () => {
+  expect(userTwo.user.name).toBe("Batse");
+});
+

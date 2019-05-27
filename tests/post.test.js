@@ -3,7 +3,14 @@ import "cross-fetch/polyfill";
 import seedDatabase, { userOne, postOne, postTwo } from "./utils/seedDatabase";
 import getClient from "./utils/getClient";
 import prisma from "../src/prisma";
-import { getPosts, myPosts, updatePost, createPost, deletePost } from './utils/operations'
+import {
+  getPosts,
+  myPosts,
+  updatePost,
+  createPost,
+  deletePost,
+  subscribeToPosts
+} from "./utils/operations";
 
 const client = getClient();
 beforeEach(seedDatabase);
@@ -61,4 +68,25 @@ test("Should delete a post", async () => {
   await client.mutate({ mutation: deletePost, variables });
   const postExist = await prisma.exists.Post({ id: postTwo.post.id }); // careful here promise returns TRUE
   expect(postExist).toBe(false);
+});
+
+// test post subscription. However, can't update postOne why? 
+// needed to test postTwo and it worked out
+test("Should subscribe to posts", async done => {
+  client.subscribe({ query: subscribeToPosts }).subscribe({
+    next(response) {
+      console.log(response);
+      expect(response.data.post.mutation).toBe("UPDATED");
+      done();
+    }
+  });
+
+    await prisma.mutation.updatePost({
+      where: {
+        id: postTwo.post.id
+      },
+      data: {
+        published: true
+      }
+    });
 });

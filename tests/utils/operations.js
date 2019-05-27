@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost'
+import { gql } from "apollo-boost";
 
 const createUser = gql`
   mutation($data: createUserInput!) {
@@ -80,13 +80,59 @@ const deletePost = gql`
   }
 `;
 
-export { 
-    createUser, 
-    getUsers, 
-    getProfile, 
-    getPosts, 
-    myPosts, 
-    updatePost, 
-    createPost, 
-    deletePost 
+// const deleteComment = gql`
+// mutation($id: ID!) {
+//     deleteComment({ id: "${commentOne.comment.id}" }) {
+//         id
+//         text
+//     }
+// }
+// `;
+
+const deleteComment = gql`
+  mutation($id: ID!) {
+    deleteComment(id: $id) {
+      id
+      text
+    }
+  }
+`;
+
+const subscribeToComments = gql`
+  subscription($post_id: ID!) {
+    comment(post_id: $post_id) {
+      mutation
+      node {
+        id
+        text
+      }
+    }
+  }
+`;
+
+const subscribeToPosts = gql`
+  subscription {
+    post {
+      mutation
+      node {
+        id
+        title
+        published
+      }
+    }
+  }
+`;
+
+export {
+  createUser,
+  getUsers,
+  getProfile,
+  getPosts,
+  myPosts,
+  updatePost,
+  createPost,
+  deletePost,
+  deleteComment,
+  subscribeToComments,
+  subscribeToPosts
 };
