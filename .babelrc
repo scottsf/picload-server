@@ -1,13 +1,17 @@
 {
   "presets": [
-    "@babel/preset-env",
-    // "react",
-    // "stage-0"
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "8.10"
+        },
+        "corejs": "2", // <---
+        "useBuiltIns": "usage"
+      }
+    ]
   ],
   "plugins": [
-    "transform-class-properties",
-    // "transform-decorators",
-    "transform-react-constant-elements",
-    "transform-react-inline-elements",
-  ],
+    "@babel/plugin-proposal-object-rest-spread"
+  ]
 }

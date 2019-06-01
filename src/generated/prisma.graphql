@@ -1,5 +1,5 @@
 # source: http://localhost:4466
-# timestamp: Fri May 17 2019 08:25:50 GMT-0700 (Pacific Daylight Time)
+# timestamp: Tue May 28 2019 08:33:39 GMT-0700 (Pacific Daylight Time)
 
 type AggregateComment {
   count: Int!
@@ -21,8 +21,8 @@ type BatchPayload {
 type Comment implements Node {
   id: ID!
   text: String!
-  author_id: User!
-  post_id: Post!
+  author_id: User
+  post_id: Post
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -40,8 +40,8 @@ type CommentConnection {
 input CommentCreateInput {
   id: ID
   text: String!
-  author_id: UserCreateOneWithoutCommentsInput!
-  post_id: PostCreateOneWithoutCommentsInput!
+  author_id: UserCreateOneWithoutCommentsInput
+  post_id: PostCreateOneWithoutCommentsInput
 }
 
 input CommentCreateManyWithoutAuthor_idInput {
@@ -57,13 +57,13 @@ input CommentCreateManyWithoutPost_idInput {
 input CommentCreateWithoutAuthor_idInput {
   id: ID
   text: String!
-  post_id: PostCreateOneWithoutCommentsInput!
+  post_id: PostCreateOneWithoutCommentsInput
 }
 
 input CommentCreateWithoutPost_idInput {
   id: ID
   text: String!
-  author_id: UserCreateOneWithoutCommentsInput!
+  author_id: UserCreateOneWithoutCommentsInput
 }
 
 """An edge in a connection."""
@@ -245,7 +245,9 @@ input CommentSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [CommentSubscriptionWhereInput!]
 
-  """The subscription event gets dispatched when it's listed in mutation_in"""
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
   mutation_in: [MutationType!]
 
   """
@@ -267,8 +269,8 @@ input CommentSubscriptionWhereInput {
 
 input CommentUpdateInput {
   text: String
-  author_id: UserUpdateOneRequiredWithoutCommentsInput
-  post_id: PostUpdateOneRequiredWithoutCommentsInput
+  author_id: UserUpdateOneWithoutCommentsInput
+  post_id: PostUpdateOneWithoutCommentsInput
 }
 
 input CommentUpdateManyDataInput {
@@ -310,12 +312,12 @@ input CommentUpdateManyWithWhereNestedInput {
 
 input CommentUpdateWithoutAuthor_idDataInput {
   text: String
-  post_id: PostUpdateOneRequiredWithoutCommentsInput
+  post_id: PostUpdateOneWithoutCommentsInput
 }
 
 input CommentUpdateWithoutPost_idDataInput {
   text: String
-  author_id: UserUpdateOneRequiredWithoutCommentsInput
+  author_id: UserUpdateOneWithoutCommentsInput
 }
 
 input CommentUpdateWithWhereUniqueWithoutAuthor_idInput {
@@ -546,7 +548,8 @@ type Post implements Node {
   title: String!
   body: String!
   published: Boolean!
-  author: User!
+  disabled: Boolean!
+  author: User
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
   updatedAt: DateTime!
   createdAt: DateTime!
@@ -567,7 +570,8 @@ input PostCreateInput {
   title: String!
   body: String!
   published: Boolean!
-  author: UserCreateOneWithoutPostsInput!
+  disabled: Boolean
+  author: UserCreateOneWithoutPostsInput
   comments: CommentCreateManyWithoutPost_idInput
 }
 
@@ -586,6 +590,7 @@ input PostCreateWithoutAuthorInput {
   title: String!
   body: String!
   published: Boolean!
+  disabled: Boolean
   comments: CommentCreateManyWithoutPost_idInput
 }
 
@@ -594,7 +599,8 @@ input PostCreateWithoutCommentsInput {
   title: String!
   body: String!
   published: Boolean!
-  author: UserCreateOneWithoutPostsInput!
+  disabled: Boolean
+  author: UserCreateOneWithoutPostsInput
 }
 
 """An edge in a connection."""
@@ -615,6 +621,8 @@ enum PostOrderByInput {
   body_DESC
   published_ASC
   published_DESC
+  disabled_ASC
+  disabled_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -626,6 +634,7 @@ type PostPreviousValues {
   title: String!
   body: String!
   published: Boolean!
+  disabled: Boolean!
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -763,6 +772,10 @@ input PostScalarWhereInput {
 
   """All values that are not equal to given value."""
   published_not: Boolean
+  disabled: Boolean
+
+  """All values that are not equal to given value."""
+  disabled_not: Boolean
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -826,7 +839,9 @@ input PostSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [PostSubscriptionWhereInput!]
 
-  """The subscription event gets dispatched when it's listed in mutation_in"""
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
   mutation_in: [MutationType!]
 
   """
@@ -850,7 +865,8 @@ input PostUpdateInput {
   title: String
   body: String
   published: Boolean
-  author: UserUpdateOneRequiredWithoutPostsInput
+  disabled: Boolean
+  author: UserUpdateOneWithoutPostsInput
   comments: CommentUpdateManyWithoutPost_idInput
 }
 
@@ -858,12 +874,14 @@ input PostUpdateManyDataInput {
   title: String
   body: String
   published: Boolean
+  disabled: Boolean
 }
 
 input PostUpdateManyMutationInput {
   title: String
   body: String
   published: Boolean
+  disabled: Boolean
 }
 
 input PostUpdateManyWithoutAuthorInput {
@@ -883,9 +901,11 @@ input PostUpdateManyWithWhereNestedInput {
   data: PostUpdateManyDataInput!
 }
 
-input PostUpdateOneRequiredWithoutCommentsInput {
+input PostUpdateOneWithoutCommentsInput {
   create: PostCreateWithoutCommentsInput
   connect: PostWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
   update: PostUpdateWithoutCommentsDataInput
   upsert: PostUpsertWithoutCommentsInput
 }
@@ -894,6 +914,7 @@ input PostUpdateWithoutAuthorDataInput {
   title: String
   body: String
   published: Boolean
+  disabled: Boolean
   comments: CommentUpdateManyWithoutPost_idInput
 }
 
@@ -901,7 +922,8 @@ input PostUpdateWithoutCommentsDataInput {
   title: String
   body: String
   published: Boolean
-  author: UserUpdateOneRequiredWithoutPostsInput
+  disabled: Boolean
+  author: UserUpdateOneWithoutPostsInput
 }
 
 input PostUpdateWithWhereUniqueWithoutAuthorInput {
@@ -1053,6 +1075,10 @@ input PostWhereInput {
 
   """All values that are not equal to given value."""
   published_not: Boolean
+  disabled: Boolean
+
+  """All values that are not equal to given value."""
+  disabled_not: Boolean
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -1241,7 +1267,9 @@ input UserSubscriptionWhereInput {
   """Logical NOT on all given filters combined by AND."""
   NOT: [UserSubscriptionWhereInput!]
 
-  """The subscription event gets dispatched when it's listed in mutation_in"""
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
   mutation_in: [MutationType!]
 
   """
@@ -1275,16 +1303,20 @@ input UserUpdateManyMutationInput {
   password: String
 }
 
-input UserUpdateOneRequiredWithoutCommentsInput {
+input UserUpdateOneWithoutCommentsInput {
   create: UserCreateWithoutCommentsInput
   connect: UserWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
   update: UserUpdateWithoutCommentsDataInput
   upsert: UserUpsertWithoutCommentsInput
 }
 
-input UserUpdateOneRequiredWithoutPostsInput {
+input UserUpdateOneWithoutPostsInput {
   create: UserCreateWithoutPostsInput
   connect: UserWhereUniqueInput
+  disconnect: Boolean
+  delete: Boolean
   update: UserUpdateWithoutPostsDataInput
   upsert: UserUpsertWithoutPostsInput
 }

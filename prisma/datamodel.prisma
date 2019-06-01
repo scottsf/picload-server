@@ -3,8 +3,8 @@ type User {
   name: String!
   email: String! @unique
   password: String!
-  posts: [Post!]! @relation(name: "PostsToUser", onDelete: CASCADE)
-  comments: [Comment]! @relation(name: "CommentsToUser", onDelete: CASCADE)
+  posts: [Post] @relation(name: "PostsToUser")
+  comments: [Comment] @relation(name: "CommentsToUser")
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
 }
@@ -14,8 +14,9 @@ type Post {
   title: String!
   body: String!
   published: Boolean!
-  author: User! @relation(name: "PostsToUser", onDelete: SET_NULL)
-  comments: [Comment]! @relation(name: "CommentsToPost", onDelete: CASCADE)
+  disabled: Boolean! @default(value: false)
+  author: User @relation(name: "PostsToUser")
+  comments: [Comment] @relation(name: "CommentsToPost")
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
 }
@@ -23,8 +24,8 @@ type Post {
 type Comment {
   id: ID! @id
   text: String!
-  author_id: User! @relation(name: "CommentsToUser", onDelete: SET_NULL)
-  post_id: Post! @relation(name: "CommentsToPost", onDelete: SET_NULL)
+  author_id: User @relation(name: "CommentsToUser")
+  post_id: Post @relation(name: "CommentsToPost")
   updatedAt: DateTime! @updatedAt
   createdAt: DateTime! @createdAt
 }

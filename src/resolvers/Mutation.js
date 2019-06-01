@@ -7,6 +7,7 @@ import deletePost from './mutations/deletePost'
 import updatePost from './mutations/updatePost'
 import createComment from './mutations/createComment'
 import deleteComment from './mutations/deleteComment'
+import deleteOthersComment from './mutations/deleteOthersComment'
 import updateComment from './mutations/updateComment'
 
 
@@ -20,6 +21,7 @@ const Mutation = {
   updatePost,
   createComment,
   deleteComment,
+  deleteOthersComment,
   updateComment
 };
 

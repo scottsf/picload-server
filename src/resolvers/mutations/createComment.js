@@ -5,10 +5,11 @@ const createComment = async (parent, args, { prisma, request }, info) => {
 
   const postPublished = await prisma.exists.Post({
     id: args.data.post_id,
-    published: true
+    published: true,
+    disabled: true
   });
 
-  if (!postPublished) throw new Error("Post is not published");
+  if (!postPublished) throw new Error("Post is not published or disabled");
 
   return prisma.mutation.createComment({
     data: {
