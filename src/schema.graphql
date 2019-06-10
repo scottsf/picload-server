@@ -26,6 +26,7 @@ type User {
   password: String!
   posts: [Post!]!
   comments: [Comment!]!
+  likes: [Post!]!
   updatedAt: String!
   createdAt: String!
 }
@@ -38,6 +39,7 @@ type Post {
   disabled: Boolean!
   author: User!
   comments: [Comment!]!
+  likedBy: [User!]!
   updatedAt: String!
   createdAt: String!
 }
@@ -66,6 +68,7 @@ type Mutation {
   updateUser(data: updateUserInput!): User!
   updatePost(id: ID!, data: updatePostInput!): Post!
   updateComment(id: ID!, data: updateCommentInput!): Comment!
+  likePost(id: ID!, like: Boolean!): Post!
 
   login(email: String!, password: String!): AuthPayload!
 }

@@ -1,5 +1,5 @@
 # source: http://localhost:4466
-# timestamp: Tue May 28 2019 08:33:39 GMT-0700 (Pacific Daylight Time)
+# timestamp: Mon Jun 10 2019 01:50:13 GMT-0700 (Pacific Daylight Time)
 
 type AggregateComment {
   count: Int!
@@ -550,6 +550,7 @@ type Post implements Node {
   published: Boolean!
   disabled: Boolean!
   author: User
+  likedBy(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
   updatedAt: DateTime!
   createdAt: DateTime!
@@ -572,11 +573,17 @@ input PostCreateInput {
   published: Boolean!
   disabled: Boolean
   author: UserCreateOneWithoutPostsInput
+  likedBy: UserCreateManyWithoutLikesInput
   comments: CommentCreateManyWithoutPost_idInput
 }
 
 input PostCreateManyWithoutAuthorInput {
   create: [PostCreateWithoutAuthorInput!]
+  connect: [PostWhereUniqueInput!]
+}
+
+input PostCreateManyWithoutLikedByInput {
+  create: [PostCreateWithoutLikedByInput!]
   connect: [PostWhereUniqueInput!]
 }
 
@@ -591,6 +598,7 @@ input PostCreateWithoutAuthorInput {
   body: String!
   published: Boolean!
   disabled: Boolean
+  likedBy: UserCreateManyWithoutLikesInput
   comments: CommentCreateManyWithoutPost_idInput
 }
 
@@ -601,6 +609,17 @@ input PostCreateWithoutCommentsInput {
   published: Boolean!
   disabled: Boolean
   author: UserCreateOneWithoutPostsInput
+  likedBy: UserCreateManyWithoutLikesInput
+}
+
+input PostCreateWithoutLikedByInput {
+  id: ID
+  title: String!
+  body: String!
+  published: Boolean!
+  disabled: Boolean
+  author: UserCreateOneWithoutPostsInput
+  comments: CommentCreateManyWithoutPost_idInput
 }
 
 """An edge in a connection."""
@@ -867,6 +886,7 @@ input PostUpdateInput {
   published: Boolean
   disabled: Boolean
   author: UserUpdateOneWithoutPostsInput
+  likedBy: UserUpdateManyWithoutLikesInput
   comments: CommentUpdateManyWithoutPost_idInput
 }
 
@@ -896,6 +916,18 @@ input PostUpdateManyWithoutAuthorInput {
   upsert: [PostUpsertWithWhereUniqueWithoutAuthorInput!]
 }
 
+input PostUpdateManyWithoutLikedByInput {
+  create: [PostCreateWithoutLikedByInput!]
+  connect: [PostWhereUniqueInput!]
+  set: [PostWhereUniqueInput!]
+  disconnect: [PostWhereUniqueInput!]
+  delete: [PostWhereUniqueInput!]
+  update: [PostUpdateWithWhereUniqueWithoutLikedByInput!]
+  updateMany: [PostUpdateManyWithWhereNestedInput!]
+  deleteMany: [PostScalarWhereInput!]
+  upsert: [PostUpsertWithWhereUniqueWithoutLikedByInput!]
+}
+
 input PostUpdateManyWithWhereNestedInput {
   where: PostScalarWhereInput!
   data: PostUpdateManyDataInput!
@@ -915,6 +947,7 @@ input PostUpdateWithoutAuthorDataInput {
   body: String
   published: Boolean
   disabled: Boolean
+  likedBy: UserUpdateManyWithoutLikesInput
   comments: CommentUpdateManyWithoutPost_idInput
 }
 
@@ -924,11 +957,26 @@ input PostUpdateWithoutCommentsDataInput {
   published: Boolean
   disabled: Boolean
   author: UserUpdateOneWithoutPostsInput
+  likedBy: UserUpdateManyWithoutLikesInput
+}
+
+input PostUpdateWithoutLikedByDataInput {
+  title: String
+  body: String
+  published: Boolean
+  disabled: Boolean
+  author: UserUpdateOneWithoutPostsInput
+  comments: CommentUpdateManyWithoutPost_idInput
 }
 
 input PostUpdateWithWhereUniqueWithoutAuthorInput {
   where: PostWhereUniqueInput!
   data: PostUpdateWithoutAuthorDataInput!
+}
+
+input PostUpdateWithWhereUniqueWithoutLikedByInput {
+  where: PostWhereUniqueInput!
+  data: PostUpdateWithoutLikedByDataInput!
 }
 
 input PostUpsertWithoutCommentsInput {
@@ -940,6 +988,12 @@ input PostUpsertWithWhereUniqueWithoutAuthorInput {
   where: PostWhereUniqueInput!
   update: PostUpdateWithoutAuthorDataInput!
   create: PostCreateWithoutAuthorInput!
+}
+
+input PostUpsertWithWhereUniqueWithoutLikedByInput {
+  where: PostWhereUniqueInput!
+  update: PostUpdateWithoutLikedByDataInput!
+  create: PostCreateWithoutLikedByInput!
 }
 
 input PostWhereInput {
@@ -1124,6 +1178,9 @@ input PostWhereInput {
   """All values greater than or equal the given value."""
   createdAt_gte: DateTime
   author: UserWhereInput
+  likedBy_every: UserWhereInput
+  likedBy_some: UserWhereInput
+  likedBy_none: UserWhereInput
   comments_every: CommentWhereInput
   comments_some: CommentWhereInput
   comments_none: CommentWhereInput
@@ -1168,6 +1225,7 @@ type User implements Node {
   password: String!
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
+  likes(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -1189,6 +1247,12 @@ input UserCreateInput {
   password: String!
   posts: PostCreateManyWithoutAuthorInput
   comments: CommentCreateManyWithoutAuthor_idInput
+  likes: PostCreateManyWithoutLikedByInput
+}
+
+input UserCreateManyWithoutLikesInput {
+  create: [UserCreateWithoutLikesInput!]
+  connect: [UserWhereUniqueInput!]
 }
 
 input UserCreateOneWithoutCommentsInput {
@@ -1207,6 +1271,16 @@ input UserCreateWithoutCommentsInput {
   email: String!
   password: String!
   posts: PostCreateManyWithoutAuthorInput
+  likes: PostCreateManyWithoutLikedByInput
+}
+
+input UserCreateWithoutLikesInput {
+  id: ID
+  name: String!
+  email: String!
+  password: String!
+  posts: PostCreateManyWithoutAuthorInput
+  comments: CommentCreateManyWithoutAuthor_idInput
 }
 
 input UserCreateWithoutPostsInput {
@@ -1215,6 +1289,7 @@ input UserCreateWithoutPostsInput {
   email: String!
   password: String!
   comments: CommentCreateManyWithoutAuthor_idInput
+  likes: PostCreateManyWithoutLikedByInput
 }
 
 """An edge in a connection."""
@@ -1248,6 +1323,221 @@ type UserPreviousValues {
   password: String!
   updatedAt: DateTime!
   createdAt: DateTime!
+}
+
+input UserScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [UserScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [UserScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [UserScalarWhereInput!]
+  id: ID
+
+  """All values that are not equal to given value."""
+  id_not: ID
+
+  """All values that are contained in given list."""
+  id_in: [ID!]
+
+  """All values that are not contained in given list."""
+  id_not_in: [ID!]
+
+  """All values less than the given value."""
+  id_lt: ID
+
+  """All values less than or equal the given value."""
+  id_lte: ID
+
+  """All values greater than the given value."""
+  id_gt: ID
+
+  """All values greater than or equal the given value."""
+  id_gte: ID
+
+  """All values containing the given string."""
+  id_contains: ID
+
+  """All values not containing the given string."""
+  id_not_contains: ID
+
+  """All values starting with the given string."""
+  id_starts_with: ID
+
+  """All values not starting with the given string."""
+  id_not_starts_with: ID
+
+  """All values ending with the given string."""
+  id_ends_with: ID
+
+  """All values not ending with the given string."""
+  id_not_ends_with: ID
+  name: String
+
+  """All values that are not equal to given value."""
+  name_not: String
+
+  """All values that are contained in given list."""
+  name_in: [String!]
+
+  """All values that are not contained in given list."""
+  name_not_in: [String!]
+
+  """All values less than the given value."""
+  name_lt: String
+
+  """All values less than or equal the given value."""
+  name_lte: String
+
+  """All values greater than the given value."""
+  name_gt: String
+
+  """All values greater than or equal the given value."""
+  name_gte: String
+
+  """All values containing the given string."""
+  name_contains: String
+
+  """All values not containing the given string."""
+  name_not_contains: String
+
+  """All values starting with the given string."""
+  name_starts_with: String
+
+  """All values not starting with the given string."""
+  name_not_starts_with: String
+
+  """All values ending with the given string."""
+  name_ends_with: String
+
+  """All values not ending with the given string."""
+  name_not_ends_with: String
+  email: String
+
+  """All values that are not equal to given value."""
+  email_not: String
+
+  """All values that are contained in given list."""
+  email_in: [String!]
+
+  """All values that are not contained in given list."""
+  email_not_in: [String!]
+
+  """All values less than the given value."""
+  email_lt: String
+
+  """All values less than or equal the given value."""
+  email_lte: String
+
+  """All values greater than the given value."""
+  email_gt: String
+
+  """All values greater than or equal the given value."""
+  email_gte: String
+
+  """All values containing the given string."""
+  email_contains: String
+
+  """All values not containing the given string."""
+  email_not_contains: String
+
+  """All values starting with the given string."""
+  email_starts_with: String
+
+  """All values not starting with the given string."""
+  email_not_starts_with: String
+
+  """All values ending with the given string."""
+  email_ends_with: String
+
+  """All values not ending with the given string."""
+  email_not_ends_with: String
+  password: String
+
+  """All values that are not equal to given value."""
+  password_not: String
+
+  """All values that are contained in given list."""
+  password_in: [String!]
+
+  """All values that are not contained in given list."""
+  password_not_in: [String!]
+
+  """All values less than the given value."""
+  password_lt: String
+
+  """All values less than or equal the given value."""
+  password_lte: String
+
+  """All values greater than the given value."""
+  password_gt: String
+
+  """All values greater than or equal the given value."""
+  password_gte: String
+
+  """All values containing the given string."""
+  password_contains: String
+
+  """All values not containing the given string."""
+  password_not_contains: String
+
+  """All values starting with the given string."""
+  password_starts_with: String
+
+  """All values not starting with the given string."""
+  password_not_starts_with: String
+
+  """All values ending with the given string."""
+  password_ends_with: String
+
+  """All values not ending with the given string."""
+  password_not_ends_with: String
+  updatedAt: DateTime
+
+  """All values that are not equal to given value."""
+  updatedAt_not: DateTime
+
+  """All values that are contained in given list."""
+  updatedAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  updatedAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  updatedAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  updatedAt_lte: DateTime
+
+  """All values greater than the given value."""
+  updatedAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  updatedAt_gte: DateTime
+  createdAt: DateTime
+
+  """All values that are not equal to given value."""
+  createdAt_not: DateTime
+
+  """All values that are contained in given list."""
+  createdAt_in: [DateTime!]
+
+  """All values that are not contained in given list."""
+  createdAt_not_in: [DateTime!]
+
+  """All values less than the given value."""
+  createdAt_lt: DateTime
+
+  """All values less than or equal the given value."""
+  createdAt_lte: DateTime
+
+  """All values greater than the given value."""
+  createdAt_gt: DateTime
+
+  """All values greater than or equal the given value."""
+  createdAt_gte: DateTime
 }
 
 type UserSubscriptionPayload {
@@ -1295,12 +1585,36 @@ input UserUpdateInput {
   password: String
   posts: PostUpdateManyWithoutAuthorInput
   comments: CommentUpdateManyWithoutAuthor_idInput
+  likes: PostUpdateManyWithoutLikedByInput
+}
+
+input UserUpdateManyDataInput {
+  name: String
+  email: String
+  password: String
 }
 
 input UserUpdateManyMutationInput {
   name: String
   email: String
   password: String
+}
+
+input UserUpdateManyWithoutLikesInput {
+  create: [UserCreateWithoutLikesInput!]
+  connect: [UserWhereUniqueInput!]
+  set: [UserWhereUniqueInput!]
+  disconnect: [UserWhereUniqueInput!]
+  delete: [UserWhereUniqueInput!]
+  update: [UserUpdateWithWhereUniqueWithoutLikesInput!]
+  updateMany: [UserUpdateManyWithWhereNestedInput!]
+  deleteMany: [UserScalarWhereInput!]
+  upsert: [UserUpsertWithWhereUniqueWithoutLikesInput!]
+}
+
+input UserUpdateManyWithWhereNestedInput {
+  where: UserScalarWhereInput!
+  data: UserUpdateManyDataInput!
 }
 
 input UserUpdateOneWithoutCommentsInput {
@@ -1326,6 +1640,15 @@ input UserUpdateWithoutCommentsDataInput {
   email: String
   password: String
   posts: PostUpdateManyWithoutAuthorInput
+  likes: PostUpdateManyWithoutLikedByInput
+}
+
+input UserUpdateWithoutLikesDataInput {
+  name: String
+  email: String
+  password: String
+  posts: PostUpdateManyWithoutAuthorInput
+  comments: CommentUpdateManyWithoutAuthor_idInput
 }
 
 input UserUpdateWithoutPostsDataInput {
@@ -1333,6 +1656,12 @@ input UserUpdateWithoutPostsDataInput {
   email: String
   password: String
   comments: CommentUpdateManyWithoutAuthor_idInput
+  likes: PostUpdateManyWithoutLikedByInput
+}
+
+input UserUpdateWithWhereUniqueWithoutLikesInput {
+  where: UserWhereUniqueInput!
+  data: UserUpdateWithoutLikesDataInput!
 }
 
 input UserUpsertWithoutCommentsInput {
@@ -1343,6 +1672,12 @@ input UserUpsertWithoutCommentsInput {
 input UserUpsertWithoutPostsInput {
   update: UserUpdateWithoutPostsDataInput!
   create: UserCreateWithoutPostsInput!
+}
+
+input UserUpsertWithWhereUniqueWithoutLikesInput {
+  where: UserWhereUniqueInput!
+  update: UserUpdateWithoutLikesDataInput!
+  create: UserCreateWithoutLikesInput!
 }
 
 input UserWhereInput {
@@ -1564,6 +1899,9 @@ input UserWhereInput {
   comments_every: CommentWhereInput
   comments_some: CommentWhereInput
   comments_none: CommentWhereInput
+  likes_every: PostWhereInput
+  likes_some: PostWhereInput
+  likes_none: PostWhereInput
 }
 
 input UserWhereUniqueInput {

@@ -6,7 +6,13 @@ import hashPassword from "../../utils/hashPassword";
 
 const createUser = async (parent, args, { prisma }, info) => {
   const password = await hashPassword(args.data.password)
-  console.log(password)
+
+  const emailExist = await prisma.exists.User({
+    email: args.data.email
+  })
+
+  if (emailExist) throw new Error('User already exists')
+
   const user = await prisma.mutation.createUser({
     data: {
       ...args.data,
