@@ -50,31 +50,24 @@ const User = {
     return prisma.query.comments(null, info);
   },
 
-  // likes(parent, args, { prisma, request }, info) {
-  //   const userId = getUserId(request);
+  likes: {
+    fragment: "fragment userId on User { id }",
+    resolve(parent, args, { prisma, request }, info) {
+      const userId = getUserId(request, false);
 
-  //   return prisma.query.posts({
-  //     AND: [
-  //       {
-  //         where: {
-  //           likedBy_every: {
-  //             id: userId
-  //           }
-  //         }
-  //       }
-
-  //     ]
-
-  //     // where: {
-  //     //   likedPosts_every: {
-  //     //     likedBy_every: {
-  //     //       id: userId
-  //     //     }
-  //     //   }
-  //     // }
-  //   });
-  //   // console.log(data)
-  // }
+      if (userId && userId === parent.id) {
+        return prisma.query.posts({
+          where: {
+            likedBy_some: {
+              id: userId
+            }
+          }
+        }, info);
+      } else {
+        return null;
+      }
+    }
+  },
 };
 
 export { User as default };

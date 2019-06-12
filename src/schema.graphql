@@ -14,7 +14,7 @@ type Query {
     skip: Int
     orderBy: CommentOrderByInput
   ): [Comment]!
-  myPosts(query: String!): [Post!]!
+  myPosts(query: String): [Post!]!
   post(id: ID): Post!
   me: User!
 }
@@ -26,7 +26,7 @@ type User {
   password: String!
   posts: [Post!]!
   comments: [Comment!]!
-  likes: [Post!]!
+  likes: [Post]
   updatedAt: String!
   createdAt: String!
 }
