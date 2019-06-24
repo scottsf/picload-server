@@ -1,5 +1,5 @@
 # source: http://localhost:4466
-# timestamp: Mon Jun 10 2019 01:50:13 GMT-0700 (Pacific Daylight Time)
+# timestamp: Wed Jun 19 2019 19:16:06 GMT-0700 (Pacific Daylight Time)
 
 type AggregateComment {
   count: Int!
@@ -547,10 +547,12 @@ type Post implements Node {
   id: ID!
   title: String!
   body: String!
+  image: String
   published: Boolean!
   disabled: Boolean!
   author: User
   likedBy(where: UserWhereInput, orderBy: UserOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [User!]
+  totalLikes: Int!
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
   updatedAt: DateTime!
   createdAt: DateTime!
@@ -570,8 +572,10 @@ input PostCreateInput {
   id: ID
   title: String!
   body: String!
+  image: String
   published: Boolean!
   disabled: Boolean
+  totalLikes: Int
   author: UserCreateOneWithoutPostsInput
   likedBy: UserCreateManyWithoutLikesInput
   comments: CommentCreateManyWithoutPost_idInput
@@ -596,8 +600,10 @@ input PostCreateWithoutAuthorInput {
   id: ID
   title: String!
   body: String!
+  image: String
   published: Boolean!
   disabled: Boolean
+  totalLikes: Int
   likedBy: UserCreateManyWithoutLikesInput
   comments: CommentCreateManyWithoutPost_idInput
 }
@@ -606,8 +612,10 @@ input PostCreateWithoutCommentsInput {
   id: ID
   title: String!
   body: String!
+  image: String
   published: Boolean!
   disabled: Boolean
+  totalLikes: Int
   author: UserCreateOneWithoutPostsInput
   likedBy: UserCreateManyWithoutLikesInput
 }
@@ -616,8 +624,10 @@ input PostCreateWithoutLikedByInput {
   id: ID
   title: String!
   body: String!
+  image: String
   published: Boolean!
   disabled: Boolean
+  totalLikes: Int
   author: UserCreateOneWithoutPostsInput
   comments: CommentCreateManyWithoutPost_idInput
 }
@@ -638,10 +648,14 @@ enum PostOrderByInput {
   title_DESC
   body_ASC
   body_DESC
+  image_ASC
+  image_DESC
   published_ASC
   published_DESC
   disabled_ASC
   disabled_DESC
+  totalLikes_ASC
+  totalLikes_DESC
   updatedAt_ASC
   updatedAt_DESC
   createdAt_ASC
@@ -652,8 +666,10 @@ type PostPreviousValues {
   id: ID!
   title: String!
   body: String!
+  image: String
   published: Boolean!
   disabled: Boolean!
+  totalLikes: Int!
   updatedAt: DateTime!
   createdAt: DateTime!
 }
@@ -787,6 +803,46 @@ input PostScalarWhereInput {
 
   """All values not ending with the given string."""
   body_not_ends_with: String
+  image: String
+
+  """All values that are not equal to given value."""
+  image_not: String
+
+  """All values that are contained in given list."""
+  image_in: [String!]
+
+  """All values that are not contained in given list."""
+  image_not_in: [String!]
+
+  """All values less than the given value."""
+  image_lt: String
+
+  """All values less than or equal the given value."""
+  image_lte: String
+
+  """All values greater than the given value."""
+  image_gt: String
+
+  """All values greater than or equal the given value."""
+  image_gte: String
+
+  """All values containing the given string."""
+  image_contains: String
+
+  """All values not containing the given string."""
+  image_not_contains: String
+
+  """All values starting with the given string."""
+  image_starts_with: String
+
+  """All values not starting with the given string."""
+  image_not_starts_with: String
+
+  """All values ending with the given string."""
+  image_ends_with: String
+
+  """All values not ending with the given string."""
+  image_not_ends_with: String
   published: Boolean
 
   """All values that are not equal to given value."""
@@ -795,6 +851,28 @@ input PostScalarWhereInput {
 
   """All values that are not equal to given value."""
   disabled_not: Boolean
+  totalLikes: Int
+
+  """All values that are not equal to given value."""
+  totalLikes_not: Int
+
+  """All values that are contained in given list."""
+  totalLikes_in: [Int!]
+
+  """All values that are not contained in given list."""
+  totalLikes_not_in: [Int!]
+
+  """All values less than the given value."""
+  totalLikes_lt: Int
+
+  """All values less than or equal the given value."""
+  totalLikes_lte: Int
+
+  """All values greater than the given value."""
+  totalLikes_gt: Int
+
+  """All values greater than or equal the given value."""
+  totalLikes_gte: Int
   updatedAt: DateTime
 
   """All values that are not equal to given value."""
@@ -883,8 +961,10 @@ input PostSubscriptionWhereInput {
 input PostUpdateInput {
   title: String
   body: String
+  image: String
   published: Boolean
   disabled: Boolean
+  totalLikes: Int
   author: UserUpdateOneWithoutPostsInput
   likedBy: UserUpdateManyWithoutLikesInput
   comments: CommentUpdateManyWithoutPost_idInput
@@ -893,15 +973,19 @@ input PostUpdateInput {
 input PostUpdateManyDataInput {
   title: String
   body: String
+  image: String
   published: Boolean
   disabled: Boolean
+  totalLikes: Int
 }
 
 input PostUpdateManyMutationInput {
   title: String
   body: String
+  image: String
   published: Boolean
   disabled: Boolean
+  totalLikes: Int
 }
 
 input PostUpdateManyWithoutAuthorInput {
@@ -945,8 +1029,10 @@ input PostUpdateOneWithoutCommentsInput {
 input PostUpdateWithoutAuthorDataInput {
   title: String
   body: String
+  image: String
   published: Boolean
   disabled: Boolean
+  totalLikes: Int
   likedBy: UserUpdateManyWithoutLikesInput
   comments: CommentUpdateManyWithoutPost_idInput
 }
@@ -954,8 +1040,10 @@ input PostUpdateWithoutAuthorDataInput {
 input PostUpdateWithoutCommentsDataInput {
   title: String
   body: String
+  image: String
   published: Boolean
   disabled: Boolean
+  totalLikes: Int
   author: UserUpdateOneWithoutPostsInput
   likedBy: UserUpdateManyWithoutLikesInput
 }
@@ -963,8 +1051,10 @@ input PostUpdateWithoutCommentsDataInput {
 input PostUpdateWithoutLikedByDataInput {
   title: String
   body: String
+  image: String
   published: Boolean
   disabled: Boolean
+  totalLikes: Int
   author: UserUpdateOneWithoutPostsInput
   comments: CommentUpdateManyWithoutPost_idInput
 }
@@ -1125,6 +1215,46 @@ input PostWhereInput {
 
   """All values not ending with the given string."""
   body_not_ends_with: String
+  image: String
+
+  """All values that are not equal to given value."""
+  image_not: String
+
+  """All values that are contained in given list."""
+  image_in: [String!]
+
+  """All values that are not contained in given list."""
+  image_not_in: [String!]
+
+  """All values less than the given value."""
+  image_lt: String
+
+  """All values less than or equal the given value."""
+  image_lte: String
+
+  """All values greater than the given value."""
+  image_gt: String
+
+  """All values greater than or equal the given value."""
+  image_gte: String
+
+  """All values containing the given string."""
+  image_contains: String
+
+  """All values not containing the given string."""
+  image_not_contains: String
+
+  """All values starting with the given string."""
+  image_starts_with: String
+
+  """All values not starting with the given string."""
+  image_not_starts_with: String
+
+  """All values ending with the given string."""
+  image_ends_with: String
+
+  """All values not ending with the given string."""
+  image_not_ends_with: String
   published: Boolean
 
   """All values that are not equal to given value."""
@@ -1133,6 +1263,28 @@ input PostWhereInput {
 
   """All values that are not equal to given value."""
   disabled_not: Boolean
+  totalLikes: Int
+
+  """All values that are not equal to given value."""
+  totalLikes_not: Int
+
+  """All values that are contained in given list."""
+  totalLikes_in: [Int!]
+
+  """All values that are not contained in given list."""
+  totalLikes_not_in: [Int!]
+
+  """All values less than the given value."""
+  totalLikes_lt: Int
+
+  """All values less than or equal the given value."""
+  totalLikes_lte: Int
+
+  """All values greater than the given value."""
+  totalLikes_gt: Int
+
+  """All values greater than or equal the given value."""
+  totalLikes_gte: Int
   updatedAt: DateTime
 
   """All values that are not equal to given value."""

@@ -3,6 +3,7 @@ import getUserId from '../utils/getUserId'
 const Query = {
   me(parent, args, { prisma, request }, info) {
     const userId = getUserId(request, true)
+    console.log(userId)
 
     return prisma.query.user({
       where: {

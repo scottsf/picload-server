@@ -6,8 +6,22 @@ const likePost = async (parent, args, { prisma, request }, info) => {
   if (!userExist) throw new Error("User does not exists");
   if (!args.id) throw "Post does not exists";
 
+  const post = await prisma.query.post({
+    where: {
+      id: args.id
+    }
+  }, info);
+
+  const userLikedPost = post.likedBy.some(user => user.id === userId)
+
+  if (userLikedPost && args.like === true) throw Error('User already liked the post')
+
+  let totalLikes = post.totalLikes;
+
   if (args.like) {
-    return prisma.mutation.updatePost(
+    totalLikes++;
+
+    return await prisma.mutation.updatePost(
       {
         where: {
           id: args.id
@@ -19,13 +33,17 @@ const likePost = async (parent, args, { prisma, request }, info) => {
                 id: userId
               }
             ]
-          }
+          },
+          totalLikes
         }
       },
       info
     );
+
   } else {
-    return prisma.mutation.updatePost(
+    totalLikes--;    
+    
+    return await prisma.mutation.updatePost(
       {
         where: {
           id: args.id
@@ -37,11 +55,12 @@ const likePost = async (parent, args, { prisma, request }, info) => {
                 id: userId
               }
             ]
-          }
+          },
+          totalLikes
         }
       },
       info
-    )
+    );
   }
 };
 

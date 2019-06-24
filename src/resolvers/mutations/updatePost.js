@@ -18,6 +18,8 @@ const updatePost = async (parent, args, { prisma, request }, info) => {
     }
   });
 
+  console.log("Here :", post)
+
   if (post.published && args.data.published === false) {
     await prisma.mutation.deleteManyComments({
       where: {
