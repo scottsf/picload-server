@@ -29,13 +29,17 @@
     "apollo-utilities": "^1.0.21",
     "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",
+    "cloudinary": "^1.14.0",
     "cross-fetch": "^3.0.2",
     "env-cmd": "^9.0.1",
     "graphql": "^0.13.2",
     "graphql-cli": "^2.17.0",
     "graphql-yoga": "^1.17.4",
     "jsonwebtoken": "^8.5.1",
+    "lowdb": "^1.0.0",
+    "mkdirp": "^0.5.1",
     "prisma-binding": "^2.3.10",
+    "shortid": "^2.2.14",
     "subscriptions-transport-ws": "^0.9.15"
   },
   "devDependencies": {

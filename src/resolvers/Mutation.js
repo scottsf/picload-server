@@ -10,6 +10,7 @@ import deleteComment from './mutations/deleteComment'
 import deleteOthersComment from './mutations/deleteOthersComment'
 import updateComment from './mutations/updateComment'
 import likePost from './mutations/likePost'
+import uploadFile from './mutations/uploadFile'
 
 
 const Mutation = {
@@ -24,7 +25,8 @@ const Mutation = {
   deleteComment,
   deleteOthersComment,
   updateComment,
-  likePost
+  likePost,
+  uploadFile
 };
 
 export { Mutation as default };

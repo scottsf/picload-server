@@ -8,6 +8,7 @@ const createPost = async (parent, args, { prisma, request }, info) => {
       data: {
         title: args.data.title,
         body: args.data.body,
+        image: args.data.image,
         published: args.data.published,
         author: {
           connect: { id: userId }
@@ -19,3 +20,4 @@ const createPost = async (parent, args, { prisma, request }, info) => {
 };
 
 export { createPost as default };
+
