@@ -11,6 +11,7 @@ type Query {
     orderBy: PostOrderByInput
   ): [Post]!
   comments(
+    post_id: ID 
     query: String
     first: Int
     skip: Int
@@ -18,6 +19,7 @@ type Query {
   ): [Comment]!
   myPosts(query: String): [Post!]!
   post(id: ID): Post!
+  comment(id: ID): Comment!
   me: User!
   totalLikes(id: ID!): Int!
 }

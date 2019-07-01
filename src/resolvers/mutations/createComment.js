@@ -6,7 +6,7 @@ const createComment = async (parent, args, { prisma, request }, info) => {
   const postPublished = await prisma.exists.Post({
     id: args.data.post_id,
     published: true,
-    disabled: true
+    disabled: false
   });
 
   if (!postPublished) throw new Error("Post is not published or disabled");

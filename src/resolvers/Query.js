@@ -92,6 +92,11 @@ const Query = {
 
   comments(parent, args, { prisma }, info) {
     const opArgs = {
+      where: {
+        post_id: {
+          id: args.post_id
+        }
+      },
       first: args.first,
       skip: args.skip,
       orderBy: args.orderBy 
@@ -100,6 +105,15 @@ const Query = {
     if (!args.query) {
       return prisma.query.comments(opArgs, info);
     }
+  },
+
+  async comment(parent, { id }, { prisma }, info) {
+    return prisma.query.comment({ 
+      where: {
+        id
+      }
+    }, info) 
+
   }
 };
 
