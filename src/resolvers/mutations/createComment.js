@@ -11,7 +11,7 @@ const createComment = async (parent, args, { prisma, request }, info) => {
 
   if (!postPublished) throw new Error("Post is not published or disabled");
 
-  return prisma.mutation.createComment({
+  const newComment = await prisma.mutation.createComment({
     data: {
       text: args.data.text,
       author_id: {
@@ -26,6 +26,8 @@ const createComment = async (parent, args, { prisma, request }, info) => {
       }
     }
   });
+
+  return newComment
 };
 
 export { createComment as default };

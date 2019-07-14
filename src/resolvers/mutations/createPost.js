@@ -3,6 +3,7 @@ import getUserId from "../../utils/getUserId";
 const createPost = async (parent, args, { prisma, request }, info) => {
   const userId = getUserId(request);
 
+  console.log(args.data)
   return await prisma.mutation.createPost(
     {
       data: {
